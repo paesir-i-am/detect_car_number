@@ -39,7 +39,7 @@ class DetectionResult:
 
 class YoloDetector:
     def __init__(self, settings: Settings):
-        # 모델 로딩은 앱 시작 시 1회 수행
+        # 모델 로딩은 앱 시작 시 1회 수행하여 추론 호출 시 지연을 최소화
         self.settings = settings
         self.device = select_device(settings.device)
         self.model = DetectMultiBackend(
@@ -54,7 +54,7 @@ class YoloDetector:
         self.model.warmup(imgsz=(1, 3, *self.imgsz))
 
     def detect(self, source: Path) -> DetectionResult:
-        # exp 디렉터리를 매 실행마다 새로 생성
+        # 매 실행마다 exp 디렉터리를 새로 생성해 결과를 분리
         save_dir = increment_path(self.settings.result_save_dir / "exp", exist_ok=True)
         images_dir = save_dir / "images"
         images_dir.mkdir(parents=True, exist_ok=True)
@@ -74,6 +74,7 @@ class YoloDetector:
             if idx >= self.settings.max_frames:
                 break
 
+            # 입력을 float(0~1)로 변환하여 모델에 전달
             im_tensor = torch.from_numpy(im).to(self.model.device)
             im_tensor = im_tensor.half() if self.model.fp16 else im_tensor.float()
             im_tensor /= 255
@@ -106,10 +107,10 @@ class YoloDetector:
 
                     file_name = f"{Path(path).stem}_{frame_index:04}_{conf:.2f}.jpg"
                     crop_path = crop_dir / file_name
-                    save_one_box(xyxy, im0, file=crop_path, BGR=True)  # 크롭 저장
+                    save_one_box(xyxy, im0, file=crop_path, BGR=True)  # 번호판 크롭 저장
 
                     image_path = images_dir / file_name
-                    cv2.imwrite(str(image_path), im0)  # 전체 프레임 저장
+                    cv2.imwrite(str(image_path), im0)  # 전체 프레임 저장(디버그/로그용)
 
                     detections.append(
                         DetectedCrop(

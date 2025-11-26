@@ -51,7 +51,7 @@ async def detect_customer_car(
     if not file and not url:
         raise HTTPException(status_code=400, detail="file 또는 url 중 하나는 필요합니다.")
 
-    cleanup_paths: list[Path] = []
+    cleanup_paths: list[Path] = []  # 임시 파일 정리 목록
 
     if file:
         if not file.filename:

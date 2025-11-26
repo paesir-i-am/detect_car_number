@@ -18,7 +18,7 @@ MIN_N_MATCHED = 3
 
 
 def _find_chars(contour_list: List[dict], possible_contours: List[dict]) -> List[List[int]]:
-    """기하 조건을 만족하는 문자 후보들을 그룹핑."""
+    """기하 조건을 만족하는 문자 후보들을 그룹핑한다."""
     matched_result_idx: List[List[int]] = []
 
     for d1 in contour_list:
@@ -68,7 +68,7 @@ def tesseract_ocr(img_path: Path, tesseract_cmd: Path, tessdata_prefix: Path) ->
     """크롭된 번호판 이미지에서 한국어/숫자 문자열을 추출."""
     possible_contours: List[dict] = []
 
-    img_array = np.fromfile(str(img_path), np.uint8)
+    img_array = np.fromfile(str(img_path), np.uint8)  # imread 대체: 경로에 한글 등 있을 때 안전
     img_ori = cv2.imdecode(img_array, cv2.IMREAD_COLOR)
     if img_ori is None:
         return ""
@@ -76,7 +76,7 @@ def tesseract_ocr(img_path: Path, tesseract_cmd: Path, tessdata_prefix: Path) ->
     height, width, channel = img_ori.shape
     gray = cv2.cvtColor(img_ori, cv2.COLOR_BGR2GRAY)
 
-    img_blurred = cv2.GaussianBlur(gray, ksize=(5, 5), sigmaX=0)
+    img_blurred = cv2.GaussianBlur(gray, ksize=(5, 5), sigmaX=0)  # 노이즈 제거
     img_blur_thresh = cv2.adaptiveThreshold(
         img_blurred,
         maxValue=255.0,

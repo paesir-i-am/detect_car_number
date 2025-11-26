@@ -11,7 +11,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent  # v2 루트 경로
 
 
 def _find_default_tesseract_cmd() -> Path:
-    """OS에 설치된 tesseract 실행 파일을 우선 검색."""
+    """OS에 설치된 tesseract 실행 파일을 우선 검색한다. 환경변수 → 플랫폼 기본 경로 → which 순서."""
     env_cmd = os.getenv("TESSERACT_CMD")
     if env_cmd:
         return Path(env_cmd)
@@ -35,7 +35,7 @@ def _find_default_tesseract_cmd() -> Path:
 
 
 def _find_default_tessdata_prefix() -> Path:
-    """tessdata(언어 데이터) 위치를 찾는다. 로컬 kor/osd 우선."""
+    """tessdata(언어 데이터) 위치를 찾는다. 로컬 kor/osd 우선, 없으면 시스템 경로를 순회."""
     env_prefix = os.getenv("TESSDATA_PREFIX")
     if env_prefix:
         return Path(env_prefix)
@@ -72,7 +72,7 @@ class Settings:
     conf_threshold: float = 0.25  # YOLO confidence 임계값
     iou_threshold: float = 0.45  # IOU 임계값
     device: str = ""  # GPU 선택 시 "0" 등
-    cleanup_intermediate: bool = True  # 결과 이미지 저장 후 중간 산출물(exp) 삭제 여부
+    cleanup_intermediate: bool = True  # True면 exp(크롭/프레임) 폴더를 최종 이미지 복사 후 삭제
 
     def ensure_dirs(self) -> None:
         self.model_dir.mkdir(parents=True, exist_ok=True)
