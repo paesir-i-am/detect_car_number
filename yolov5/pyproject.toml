@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "yolov5-local"
+version = "0.0.0"
+description = "Local YOLOv5 package for detect_car_number v2"
+requires-python = ">=3.8"
+license = {text = "GPL-3.0"}
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+include = ["yolov5", "yolov5.*"]
