@@ -20,10 +20,23 @@ uv pip install -r requirements.txt
 ## 실행
 ```bash
 uv run uvicorn detect_car_number.main:app --reload
-# 또는
-.venv/bin/uvicorn detect_car_number.main:app --reload
 ```
 - 헬스 체크: `GET /health`
+
+## 로컬 스모크 테스트 (샘플 영상)
+- 사전 준비: macOS의 경우 `brew install tesseract`로 바이너리 설치(이미 있으면 생략)
+- 의존성 설치: 위 "설치" 절차로 가상환경 생성 후 `uv pip install -r requirements.txt`
+- 서버 실행: 위 "실행" 절차로 FastAPI 서버 기동
+- 새 터미널에서 샘플 영상 호출:
+  ```bash
+  curl -F "url=/Users/paesir/Desktop/git/detect_car_number/gate_60f_01_day.MOV" \
+       http://localhost:8000/v1/live/customer-car
+  ```
+  또는 업로드 방식:
+  ```bash
+  curl -F "file=@gate_60f_01_day.MOV" http://localhost:8000/v1/live/customer-car
+  ```
+- 결과 확인: 응답 JSON의 `status`/`car_number` 확인, 최종 이미지는 `outputs/result_img/`에 저장됨(`cleanup_intermediate=False`로 변경 시 `outputs/result_save/exp`에 중간 산출물 보존)
 
 ## 프로젝트 구조 (최상위)
 - `detect_car_number/` 패키지: settings/detector/ocr/pipeline/main

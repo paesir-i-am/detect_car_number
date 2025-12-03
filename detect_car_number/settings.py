@@ -6,7 +6,6 @@ from dataclasses import dataclass, field
 from shutil import which
 from pathlib import Path
 
-
 BASE_DIR = Path(__file__).resolve().parent.parent  # v2 루트 경로
 
 
